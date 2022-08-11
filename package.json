@@ -1,0 +1,58 @@
+{
+  "name": "service-search-node",
+  "version": "1.0.0",
+  "author": "Conceptual Vision Consulting LLC",
+  "description": "Search microservice in Node.js / ES2017",
+  "contributors": [
+    {
+      "name": "Sergey Seroukhov",
+      "email": "seroukhov@gmail.com"
+    },
+    {
+      "name": "Danil Prisiazhnyi",
+      "email": "judas.priest999@gmail.com"
+    }
+  ],
+  "main": "./obj/src/index.js",
+  "typings": "./obj/src/index.d.ts",
+  "keywords": [
+    "pip.services",
+    "search",
+    "microservice"
+  ],
+  "noAnalyze": true,
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:pip-services-infrastructure2/service-email-node.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "private": false,
+  "scripts": {
+    "service": "node ./bin/run.js",
+    "test": "mocha -t 10000 -R spec -u tdd --recursive ./obj/test",
+    "test_30s": "mocha -t 30000 -R spec -u tdd --recursive ./obj/test",
+    "delay_test": "sleep 60 && echo Continue... && mocha -t 30000 -R spec -u tdd --recursive ./obj/test"
+  },
+  "dependencies": {
+    "elasticsearch": "^16.7.1",
+    "pip-services3-commons-nodex": "^1.0.*",
+    "pip-services3-components-nodex": "^1.4.*",
+    "pip-services3-container-nodex": "^1.0.*",
+    "pip-services3-data-nodex": "^1.0.*",
+    "pip-services3-mongodb-nodex": "^1.0.*",
+    "pip-services3-rpc-nodex": "^1.2.*",
+    "pip-services3-swagger-nodex": "^1.0.*"
+  },
+  "devDependencies": {
+    "@types/chai": "*",
+    "@types/mocha": "*",
+    "@types/mongodb": "^4.0.7",
+    "@types/node": "*",
+    "chai": "*",
+    "mocha": "*",
+    "restify": "^4.3.0"
+  }
+}

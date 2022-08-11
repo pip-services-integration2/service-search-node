@@ -1,0 +1,39 @@
+version: '3.3'
+
+services:
+  test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test
+    image: ${IMAGE:-test}
+    links:
+      - mongo
+      - elasticsearch
+    environment:
+      - MONGO_SERVICE_HOST=mongo
+      - MONGO_SERVICE_PORT=27017
+      - MONGO_DB=test
+
+      - ELASTICSEARCH_SERVICE_HOST=elasticsearch
+      - ELASTICSEARCH_SERVICE_PORT=9200
+
+
+  mongo:
+    image: mongo:latest
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.13
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK

@@ -1,0 +1,79 @@
+---
+# Container descriptor
+- descriptor: "pip-services:context-info:default:default:1.0"
+  name: "records"
+  description: "Search microservice"
+
+# Console logger
+- descriptor: "pip-services:logger:console:default:1.0"
+  level: "trace"
+
+# Perfomance counter that post values to log
+- descriptor: "pip-services:counters:log:default:1.0"
+
+{{#if MEMORY_ENABLED}}
+# In-memory persistence. Use only for testing!
+- descriptor: "service-search:persistence:memory:default:1.0"
+{{/if}}
+
+{{#if FILE_ENABLED}}
+# File persistence
+- descriptor: "service-search:persistence:file:default:1.0"
+  path: {{FILE_PATH}}{{#unless FILE_PATH}}"./data/search.json"{{/unless}}
+{{/if}}
+
+{{#if MONGO_ENABLED}}
+# MongoDb persistence
+- descriptor: "service-search:persistence:mongodb:default:1.0"
+  connection:
+    uri: {{MONGO_SERVICE_URI}}
+    host: {{MONGO_SERVICE_HOST}}{{#unless MONGO_SERVICE_HOST}}"localhost"{{/unless}}
+    port: {{MONGO_SERVICE_PORT}}{{#unless MONGO_SERVICE_PORT}}27017{{/unless}}
+    database: {{MONGO_DB}}{{#unless MONGO_DB}}app{{/unless}}
+{{/if}}
+
+{{#if ELASTIC_ENABLED}}
+# Elastic Persistence
+- descriptor: "service-search:persistence:couchbase:default:1.0"
+  index: {{ELASTIC_INDEX}}{{#unless ELASTIC_INDEX}}search{{/unless}}
+  type: {{ELASTIC_TYPE}}{{#unless ELASTIC_TYPE}}search_records{{/unless}}
+  connection:
+    host: {{{ELASTIC_SERVICE_HOST}}}{{#unless ELASTIC_SERVICE_HOST}}localhost{{/unless}}
+    port: {{ELASTIC_SERVICE_PORT}}{{#unless ELASTIC_SERVICE_PORT}}9200{{/unless}}
+  options:
+    reconnect: 60000
+    timeout: 30000
+    max_retries: 3
+{{/if}}
+
+{{#unless MEMORY_ENABLED}}{{#unless FILE_ENABLED}}{{#unless MONGO_ENABLED}}{{#unless ELASTIC_ENABLED}}
+# Default to in-memory persistence, if nothing is set
+- descriptor: "service-search:persistence:memory:default:1.0"
+{{/unless}}{{/unless}}{{/unless}}{{/unless}}
+
+# Controller
+- descriptor: "service-search:controller:default:default:1.0"
+
+{{#if HTTP_ENABLED}}
+# Common HTTP endpoint
+- descriptor: "pip-services:endpoint:http:default:1.0"
+  connection:
+    protocol: http
+    host: 0.0.0.0
+    port: {{HTTP_PORT}}{{#unless HTTP_PORT}}8080{{/unless}}
+
+# HTTP endpoint service version 1.0
+- descriptor: "service-search:service:commandable-http:default:1.0"
+  swagger:
+    enable: true
+    auto: true
+
+# Hearbeat service
+- descriptor: "pip-services:heartbeat-service:http:default:1.0"
+
+# Status service
+- descriptor: "pip-services:status-service:http:default:1.0"
+
+# Swagger service
+- descriptor: "pip-services:swagger-service:http:default:1.0"
+{{/if}}
